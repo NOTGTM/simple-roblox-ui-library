@@ -1,64 +1,70 @@
--- define UI library
-local Tabs = {}
-Tabs.__index = Tabs
+local Gui = {}
 
-function Tabs.new()
-    local self = setmetatable({}, Tabs)
-    self.Tabs = {}
-    return self
-end
-
-function Tabs:AddTab(name, frame)
-    self.Tabs[name] = frame
-    frame.Visible = false
-end
-
-function Tabs:SwitchToTab(name)
-    for tabName, tabFrame in pairs(self.Tabs) do
-        if tabName == name then
-            tabFrame.Visible = true
-        else
-            tabFrame.Visible = false
-        end
-    end
-end
-
--- create tabs object and add tabs
-local tabs = Tabs.new()
-
-local tab1Frame = Instance.new("Frame")
-tab1Frame.Size = UDim2.new(1, 0, 1, 0)
-tab1Frame.BackgroundColor3 = Color3.new(1, 0, 0)
-
-local tab2Frame = Instance.new("Frame")
-tab2Frame.Size = UDim2.new(1, 0, 1, 0)
-tab2Frame.BackgroundColor3 = Color3.new(0, 1, 0)
-
-tabs:AddTab("Tab 1", tab1Frame)
-tabs:AddTab("Tab 2", tab2Frame)
-
--- create UI for switching between tabs
-local screenGui = Instance.new("ScreenGui")
-screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
-
-local tabsFrame = Instance.new("Frame")
-tabsFrame.Parent = screenGui
-tabsFrame.Size = UDim2.new(1, 0, 0, 50)
-tabsFrame.Position = UDim2.new(0, 0, 1, -50)
-tabsFrame.BackgroundColor3 = Color3.new(0, 0, 0)
-
-for tabName, _ in pairs(tabs.Tabs) do
-    local button = Instance.new("TextButton")
-    button.Parent = tabsFrame
-    button.Size = UDim2.new(0, 100, 0, 50)
-    button.Position = UDim2.new(0, 100 * (#tabsFrame:GetChildren() - 1), 0, 0)
-    button.BackgroundColor3 = Color3.new(1, 1, 1)
-    button.Text = tabName
+function Gui.new(title, parent)
+    local windowSize = Vector2.new(400, 300)
+    local topbarSize = 24
     
-    button.MouseButton1Click:Connect(function()
-        tabs:SwitchToTab(tabName)
+    local frame = Instance.new("Frame")
+    frame.Size = UDim2.new(0, windowSize.X, 0, windowSize.Y)
+    frame.Position = UDim2.new(0.5, -windowSize.X/2, 0.5, -windowSize.Y/2)
+    frame.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    frame.BorderSizePixel = 0
+    frame.Parent = parent
+    frame.Draggable = true
+    
+    local topbar = Instance.new("Frame")
+    topbar.Size = UDim2.new(1, 0, 0, topbarSize)
+    topbar.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+    topbar.BorderSizePixel = 0
+    topbar.Parent = frame
+    
+    local titleText = Instance.new("TextLabel")
+    titleText.Text = title
+    titleText.TextColor3 = Color3.fromRGB(255, 255, 255)
+    titleText.BackgroundTransparency = 1
+    titleText.Font = Enum.Font.SourceSansBold
+    titleText.TextSize = 14
+    titleText.Size = UDim2.new(1, -50, 1, 0)
+    titleText.Position = UDim2.new(0, 50, 0, 0)
+    titleText.Parent = topbar
+    
+    local closeButton = Instance.new("TextButton")
+    closeButton.Text = "X"
+    closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    closeButton.BackgroundTransparency = 1
+    closeButton.Font = Enum.Font.SourceSansBold
+    closeButton.TextSize = 14
+    closeButton.Size = UDim2.new(0, 25, 0, topbarSize)
+    closeButton.Position = UDim2.new(1, -25, 0, 0)
+    closeButton.Parent = topbar
+    
+    closeButton.MouseButton1Click:Connect(function()
+        frame:Destroy()
     end)
+    
+    local minimizeButton = Instance.new("TextButton")
+    minimizeButton.Text = "-"
+    minimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+    minimizeButton.BackgroundTransparency = 1
+    minimizeButton.Font = Enum.Font.SourceSansBold
+    minimizeButton.TextSize = 14
+    minimizeButton.Size = UDim2.new(0, 25, 0, topbarSize)
+    minimizeButton.Position = UDim2.new(1, -50, 0, 0)
+    minimizeButton.Parent = topbar
+    
+    minimizeButton.MouseButton1Click:Connect(function()
+        frame.Visible = false
+    end)
+    
+    local contentFrame = Instance.new("Frame")
+    contentFrame.Size = UDim2.new(1, 0, 1, -topbarSize)
+    contentFrame.Position = UDim2.new(0, 0, 0, topbarSize)
+    contentFrame.BackgroundColor3 = Color3.fromRGB(230, 230, 230)
+    contentFrame.BorderSizePixel = 0
+    contentFrame.Parent = frame
+    
+    return {
+        Frame = frame,
+        ContentFrame = contentFrame,
+    }
 end
-
--- switch to initial tab
-tabs:SwitchToTab("Tab 1")
