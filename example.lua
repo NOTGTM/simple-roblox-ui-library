@@ -1,5 +1,4 @@
-local UI = loadstring(game:HttpGet("https://pastebin.com/raw/GAGA5H8t"))()
-
+local UI = loadstring(game:HttpGet("https://raw.githubusercontent.com/NOTGTM/simple-roblox-ui-library/main/ui.lua"))()
 local frame = script.Parent.Frame
 local tabs = {}
 local activeTab = nil
