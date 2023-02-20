@@ -1,4 +1,4 @@
-local UI = 
+local UI = loadstring(game:HttpGet("https://pastebin.com/raw/GAGA5H8t"))()
 
 local frame = script.Parent.Frame
 local tabs = {}
